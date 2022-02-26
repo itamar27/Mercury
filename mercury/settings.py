@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import environ
-
+import logging
+from mercury.constants import BYTES, KILOBYTE, MEGABYTE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,7 +49,52 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'profiles',
+    'research',
 ]
+
+logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
+logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
+LOG_LEVEL = env("LOG_LEVEL")
+
+#Define custom logger for mercury project
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "root": {"level": "DEBUG", "handlers": ["file_rotation", "console"]},
+    "handlers": {
+        'console':{
+            'level': LOG_LEVEL,
+            'class': 'logging.StreamHandler',   
+            'formatter': 'app',
+        },
+        'file_rotation': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': './django.log',
+            'formatter': 'app',
+            'maxBytes': logs_max_file_size_gb * MEGABYTE * KILOBYTE * BYTES,  # convert GB to bytes
+            'backupCount': logs_backup_count,
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file_rotation", "console"],
+            "level": "INFO",
+            "propagate": False
+        },
+    },
+    "formatters": {
+        "app": {
+            "format": (
+                u"%(asctime)s [%(levelname)-8s] "
+                "(%(module)s.%(funcName)s) %(message)s"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -130,7 +176,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+AUTH_USER_MODEL = 'profiles.UserProfile'
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

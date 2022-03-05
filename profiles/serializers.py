@@ -1,18 +1,13 @@
 from rest_framework import serializers
 from profiles import models
 
-class GameAppearanceSerializer(serializers.ModelSerializer):
-    """Serializer a game_appearance for participant"""
-    class Meta:
-        model = models.GameAppearance
-        fields = ('hair', 'gender', 'items', 'color')
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    "Serializers a user profile object"
+class ResearcherSerializer(serializers.ModelSerializer):
+    "Serializers a researcher object"
 
     class Meta:
-        model = models.UserProfile
-        
+        model = models.Researcher
+        managed = False
         fields = (
             'id',
             'email',
@@ -30,8 +25,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def create(self, validation_data):
         """Create and return a new user"""
-
-        user = models.UserProfile.objects.create_user(
+        user = models.Researcher.objects.create_user(
             email=validation_data['email'],
             first_name=validation_data['first_name'],
             last_name=validation_data['last_name'],
@@ -48,31 +42,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
  
         return super().update(instance, validated_data)
 
-class ResearcherSerializer(UserProfileSerializer):
-    """Serializer a Researcher object"""
 
-    organization = serializers.CharField(max_length= 30)
 
-    class Meta(UserProfileSerializer.Meta):
-        fields = UserProfileSerializer.Meta.fields + ('organization',)
 
-class ParticipantSerializer(UserProfileSerializer):
-    """Serializer a Researcher object"""
-    
-    character_name = serializers.CharField(max_length=30)
-    daily_mission_score = serializers.IntegerField()
-    was_killer = serializers.BooleanField(default=False)
-    killer_round = serializers.IntegerField()
-    game_appearance = GameAppearanceSerializer()
-
-    class Meta(UserProfileSerializer.Meta):
-        fields = UserProfileSerializer.Meta.fields + (
-            'character_name',
-            'daily_mission_score',
-            'was_killer',
-            'killer_round',
-            'game_appearance'
-        )
 
 
 

@@ -6,12 +6,11 @@ from django.conf import settings
 
 from research.models import Research
 
-
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
 
     def create_user(self, email, first_name, last_name, password=None):
-        """Create a new user profile"""
+        """Create a new user """
         
         if not email:
             raise ValueError("Email has to be provided")
@@ -39,7 +38,7 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
-class UserProfile(AbstractBaseUser, PermissionsMixin):
+class Researcher(AbstractBaseUser, PermissionsMixin):
     """Database model for users in the system"""
     
     #Mercury related fields
@@ -76,24 +75,4 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         """Return string representation of user (email only)"""
         return self.email
 
-class Researcher(UserProfile):
-    """Database model for researcher"""
-    organization = models.CharField(max_length=255, blank=True, null=True)
 
-class Participant(UserProfile):
-    """Database model for Participant"""
-    character_name = models.CharField(max_length=255, blank=True, null=True)
-    daily_mission_score = models.PositiveIntegerField(blank=True, null=True)
-    was_killer = models.BooleanField(default=False,blank=True, null=True)
-    killer_round = models.SmallIntegerField(blank=True, null=True)
-    game_appearance = models.ForeignKey(
-        'profiles.GameAppearance',
-        on_delete=models.CASCADE,
-    )
-
-class GameAppearance(models.Model):
-    """Database model for player appearance in game"""
-    hair = models.CharField(max_length=20, blank=True, null=True)
-    gender = models.CharField(max_length=20, blank=True, null=True)
-    items = models.CharField(max_length=20, blank=True, null=True)
-    color = models.CharField(max_length=20, blank=True, null=True)

@@ -7,7 +7,6 @@ class ResearcherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Researcher
-        managed = False
         fields = (
             'id',
             'email',

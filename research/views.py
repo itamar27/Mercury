@@ -33,8 +33,7 @@ class ParticipantList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        
-    
+           
 class ParticipantDetails(APIView):
     """
     Retrieve, update or delete a Participant instance.
@@ -74,7 +73,7 @@ class ParticipantDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 
-class InteractionAPIView(APIView):
+class InteractionList(APIView):
     """Class to manage all project interactions"""
     serializer_class = InteractionSerializer
     
@@ -115,3 +114,25 @@ class InteractionsNetworkAPIView(APIView):
         print(f'\n\n{os.path.exists(path)}')
         logger.info("Creating a network from all interaction for current research")
         return render(request, path, status=response_status)
+
+
+class GameConfigurationDetail(APIView):
+    """Class to manage research configuration"""
+
+    # serializer_class = GameConfigurationSerializer TODO
+
+    # def get_object(self, pk):
+    #     try:
+    #         return GameConfiguration.objects.get(pk=pk)
+    #     except GameConfiguration.DoesNotExist:
+    #         raise Http404
+
+    def get(self, request, researchId, format=None):
+        
+
+        game_configuration = {
+            'researchId': researchId,
+            'max_players': 10,
+            'game_code': 123
+        }
+        return Response(game_configuration)

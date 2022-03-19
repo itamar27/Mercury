@@ -13,11 +13,15 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import environ
-
+import logging
+import django_heroku
+from mercury.constants import BYTES, KILOBYTE, MEGABYTE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Activate Django-Heroku.
+django_heroku.settings(locals())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -33,7 +37,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mercury-alpha-1.herokuapp.com/']
 
 
 # Application definition
@@ -48,10 +52,56 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'profiles',
+    'research',
 ]
+
+logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
+logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
+LOG_LEVEL = env("LOG_LEVEL")
+
+#Define custom logger for mercury project
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "root": {"level": "DEBUG", "handlers": ["file_rotation", "console"]},
+    "handlers": {
+        'console':{
+            'level': LOG_LEVEL,
+            'class': 'logging.StreamHandler',   
+            'formatter': 'app',
+        },
+        'file_rotation': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': './django.log',
+            'formatter': 'app',
+            'maxBytes': logs_max_file_size_gb * MEGABYTE * KILOBYTE * BYTES,  # convert GB to bytes
+            'backupCount': logs_backup_count,
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file_rotation", "console"],
+            "level": "INFO",
+            "propagate": False
+        },
+    },
+    "formatters": {
+        "app": {
+            "format": (
+                u"%(asctime)s [%(levelname)-8s] "
+                "(%(module)s.%(funcName)s) %(message)s"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.whiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,10 +177,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'profiles.Researcher'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import environ
-import logging
-import django_heroku
 from mercury.constants import BYTES, KILOBYTE, MEGABYTE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +31,7 @@ environ.Env.read_env()
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 
 ALLOWED_HOSTS = ['mercury-alpha-1.herokuapp.com/', '*']
 
@@ -99,7 +97,6 @@ LOGGING = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.whiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -108,8 +105,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# # Activate Django-Heroku.
-# django_heroku.settings(locals())
 
 ROOT_URLCONF = 'mercury.urls'
 
@@ -175,12 +170,9 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
-
 STATIC_URL = '/static/'
+
+STATIC_ROOT = 'static/'
 
 AUTH_USER_MODEL = 'profiles.Researcher'
 

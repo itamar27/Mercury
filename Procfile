@@ -1,1 +1,0 @@
-web: gunicorn mercury.wsgi --log-file -

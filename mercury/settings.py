@@ -31,9 +31,9 @@ environ.Env.read_env()
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get('DEBUG', 1)))
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ['mercury-alpha-1.herokuapp.com/', '*']
+ALLOWED_HOSTS = ['ec2-50-16-164-1.compute-1.amazonaws.com']
 
 
 # Application definition

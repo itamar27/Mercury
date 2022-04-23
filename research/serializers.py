@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from research.models import Participant, GameAppearance, Vote, Interactions
+from research.models import Participant,GameConfiguration, GameAppearance, Vote, Interactions
 
+
+class GameConfigurationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GameConfiguration
+        fields = '__all__' 
 class InteractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interactions

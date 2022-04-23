@@ -28,10 +28,10 @@ env = environ.Env()
 environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = 'django-insecure-yt%bvrwo4#t9xie7$exh@(8qgl@^vpfj)s$ovjew100dkcw*pg'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = False
 
 ALLOWED_HOSTS = ['ec2-50-16-164-1.compute-1.amazonaws.com', 'localhost', '127.0.0.1']
 
@@ -51,9 +51,9 @@ INSTALLED_APPS = [
     'research',
 ]
 
-logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
-logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
-LOG_LEVEL = env("LOG_LEVEL")
+# logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
+# logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
+# LOG_LEVEL = env("LOG_LEVEL")
 
 #Define custom logger for mercury project
 LOGGING = {
@@ -62,17 +62,17 @@ LOGGING = {
     "root": {"level": "DEBUG", "handlers": ["file_rotation", "console"]},
     "handlers": {
         'console':{
-            'level': LOG_LEVEL,
+            'level': DEBUG,
             'class': 'logging.StreamHandler',   
             'formatter': 'app',
         },
         'file_rotation': {
-            'level': LOG_LEVEL,
+            'level': DEBUG,
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': './django.log',
             'formatter': 'app',
-            'maxBytes': logs_max_file_size_gb * MEGABYTE * KILOBYTE * BYTES,  # convert GB to bytes
-            'backupCount': logs_backup_count,
+            'maxBytes': 2 * MEGABYTE * KILOBYTE * BYTES,  # convert GB to bytes
+            'backupCount': 3,
         },
     },
     "loggers": {
@@ -172,7 +172,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, '/staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 
 AUTH_USER_MODEL = 'profiles.Researcher'
 

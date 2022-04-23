@@ -65,10 +65,6 @@ class Vote(models.Model):
     round = models.SmallIntegerField(blank=True, null=True)
     time_stamp = models.TimeField(auto_now_add=True)
 
-class Clues(models.Model):
-    """Database model to represent all clues and their"""
-    #TBD after alpha phase
-    pass
 
 class Interactions(models.Model):
     """Datebase model for interaction of two players in game"""
@@ -87,7 +83,13 @@ def download_csv(modeladmin, request, queryset):
     for s in queryset:
         writer.writerow([s.source, s.target, s.message, s.time_stamp])
 
-
 class StatAdmin(admin.ModelAdmin):
     list_display = ('source', 'target', 'message', 'time_stamp')
     actions = [download_csv]
+
+class Clues(models.Model):
+    """Database model to represent all clues and their"""
+    #TBD after alpha phase
+    pass
+
+

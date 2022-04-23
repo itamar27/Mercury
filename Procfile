@@ -1,1 +1,2 @@
-web: gunicorn  mercury.wsgi
+release: python manage.py migrate --noinput
+web: gunicorn mercury.wsgi

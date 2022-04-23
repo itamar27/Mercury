@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-yt%bvrwo4#t9xie7$exh@(8qgl@^vpfj)s$ovjew100dkcw*pg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['ec2-50-16-164-1.compute-1.amazonaws.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['mercury-be-2022.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition

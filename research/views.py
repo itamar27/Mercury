@@ -18,14 +18,14 @@ class ParticipantList(APIView):
     """A view class to manage participants"""
     serializer_class = ParticipantSerializer
     
-    def get(self, request, researchId):
+    def get(self, request):
         """Return list of participants"""        
         participants = Participant.objects.all()
         serializer = self.serializer_class(participants, many=True)
         response_status = status.HTTP_200_OK
         return  Response({"data": serializer.data}, status = response_status)
     
-    def post(self, request, researchId):
+    def post(self, request):
         """Create a new Participant"""
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():

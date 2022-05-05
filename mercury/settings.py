@@ -33,7 +33,12 @@ SECRET_KEY = 'django-insecure-yt%bvrwo4#t9xie7$exh@(8qgl@^vpfj)s$ovjew100dkcw*pg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mercury-be-3022.herokuapp.com','mercury-be-2022.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'mercury-be-3022.herokuapp.com',
+    'mercury-be-2022.herokuapp.com', 
+    'localhost', 
+    '127.0.0.1'
+]
 
 
 # Application definition
@@ -130,14 +135,24 @@ WSGI_APPLICATION = 'mercury.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# SQLITE Database configurations
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME':'d2oo0d3u6vr7h0',
+        'HOST': 'ec2-3-209-124-113.compute-1.amazonaws.com',
+        'PORT': '5432',
+        'USER': 'skanxeufuzpdvz',
+        'PASSWORD': '011d0fa4aefc4304323bbd70efebdc6893aab84526db0aed6c764d10cebe566f',
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 

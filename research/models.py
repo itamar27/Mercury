@@ -5,6 +5,26 @@ class Research(models.Model):
     """Model for research"""
     pass
 
+class GameConfiguration(models.Model):
+    """Database model for game configuration json data"""
+    OPTIMAL = 1
+    SUB_OPTIMAL = 2
+    BOOT_STRATEGY_CHOICE = [
+        (OPTIMAL, 'Optimal'),
+        (SUB_OPTIMAL, 'SubOptimal')
+    ]
+
+    game_code = models.IntegerField()
+    start_time = models.DateTimeField()
+    agents_behaviors = models.CharField(
+        max_length= 50,
+        choices=BOOT_STRATEGY_CHOICE,
+        default=OPTIMAL
+    )
+
+    def __str__(self):
+        return str(self.game_code)
+        
 class Participant(models.Model):
     """Database model for Participant"""
     email = models.EmailField(unique=True)
@@ -45,10 +65,7 @@ class Vote(models.Model):
     round = models.SmallIntegerField(blank=True, null=True)
     time_stamp = models.TimeField(auto_now_add=True)
 
-class Clues(models.Model):
-    """Database model to represent all clues and their"""
-    #TBD after alpha phase
-    pass
+
 class Interactions(models.Model):
     """Datebase model for interaction of two players in game"""
     source = models.CharField(max_length=5)
@@ -66,7 +83,13 @@ def download_csv(modeladmin, request, queryset):
     for s in queryset:
         writer.writerow([s.source, s.target, s.message, s.time_stamp])
 
-
 class StatAdmin(admin.ModelAdmin):
     list_display = ('source', 'target', 'message', 'time_stamp')
     actions = [download_csv]
+
+class Clues(models.Model):
+    """Database model to represent all clues and their"""
+    #TBD after alpha phase
+    pass
+
+

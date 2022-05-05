@@ -7,8 +7,8 @@ from django.shortcuts import render
 import os
 
 from network.network_utils import create_network
-from research.models import Participant, Interactions
-from research.serializers import ParticipantSerializer,InteractionSerializer
+from research.models import Participant, Interactions, GameConfiguration
+from research.serializers import ParticipantSerializer,InteractionSerializer, GameConfigurationSerializer
 
 import logging
 
@@ -40,13 +40,13 @@ class ParticipantDetails(APIView):
     """
     serializer_class = ParticipantSerializer
     
-    def get_object(self, pk):
+    def get_object(self, pk, researchId):
         try:
             return Participant.objects.get(pk=pk)
         except Participant.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk, researchId, format=None):
         participant = self.get_object(pk)
         serializer = self.serializer_class(participant)
         return Response(serializer.data)
@@ -94,9 +94,9 @@ class InteractionList(APIView):
             serializer.save()
             logger.info(f"Creating new interaction - {serializer.data.get('id')}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-        logger.warning(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            logger.warning(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InteractionsNetworkAPIView(APIView):
@@ -118,21 +118,28 @@ class InteractionsNetworkAPIView(APIView):
 
 class GameConfigurationDetail(APIView):
     """Class to manage research configuration"""
-
-    # serializer_class = GameConfigurationSerializer TODO
-
-    # def get_object(self, pk):
-    #     try:
-    #         return GameConfiguration.objects.get(pk=pk)
-    #     except GameConfiguration.DoesNotExist:
-    #         raise Http404
+    
+    serializer_class = GameConfigurationSerializer
+    
+    def get_object(self, pk):
+        try:
+            return GameConfiguration.objects.get(pk=pk)
+        except GameConfiguration.DoesNotExist:
+            raise Http404
 
     def get(self, request, researchId, format=None):
+        gameconfig = self.get_object(researchId)
+        serializer = self.serializer_class(gameconfig)
+        return Response(serializer.data)
+    
+    def post(self, researchId,request):
+        """Create a research game configuration"""
         
-
-        game_configuration = {
-            'researchId': researchId,
-            'max_players': 10,
-            'game_code': 123
-        }
-        return Response(game_configuration)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            logger.info(f"Creating new interaction - {serializer.data.get('game_code')}")
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            logger.warning(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

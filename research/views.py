@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.http import Http404
 from django.shortcuts import render
 
@@ -17,9 +19,14 @@ logger = logging.getLogger(__name__)
 class ParticipantList(APIView):
     """A view class to manage participants"""
     serializer_class = ParticipantSerializer
-    
+    permissions_classes = [IsAuthenticated]
+
     def get(self, request):
-        """Return list of participants"""        
+        """Return list of participants"""
+
+        if not request.user.is_authenticated:
+            return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
+
         participants = Participant.objects.all()
         serializer = self.serializer_class(participants, many=True)
         response_status = status.HTTP_200_OK
@@ -120,6 +127,7 @@ class GameConfigurationDetail(APIView):
     """Class to manage research configuration"""
     
     serializer_class = GameConfigurationSerializer
+    permission_classes = [IsAuthenticated]
     
     def get_object(self, pk):
         try:
@@ -127,18 +135,18 @@ class GameConfigurationDetail(APIView):
         except GameConfiguration.DoesNotExist:
             raise Http404
 
-    def get(self, request, researchId, format=None):
-        gameconfig = self.get_object(researchId)
-        serializer = self.serializer_class(gameconfig)
+    def get(self, request, format=None):
+        # gameconfig_id = self.get_object(request.query_params.get('researchId'))
+        serializer = self.serializer_class()
         return Response(serializer.data)
     
-    def post(self, researchId,request):
+    def post(self, request):
         """Create a research game configuration"""
         
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            logger.info(f"Creating new interaction - {serializer.data.get('game_code')}")
+            logger.info(f"Creating new game configuration - {serializer.data.get('game_code')}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             logger.warning(serializer.errors)

@@ -35,12 +35,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'mercury-be-3022.herokuapp.com',
-    'mercury-be-2022.herokuapp.com', 
-    'localhost', 
+    'mercury-be-2022.herokuapp.com',
+    'localhost',
     '127.0.0.1'
 ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
 
-
+CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,25 +53,35 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'profiles',
     'research',
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ]
+}
+
 # logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
 # logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
 # LOG_LEVEL = env("LOG_LEVEL")
 
-#Define custom logger for mercury project
+# Define custom logger for mercury project
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "root": {"level": "DEBUG", "handlers": ["file_rotation", "console"]},
     "handlers": {
-        'console':{
+        'console': {
             'level': DEBUG,
-            'class': 'logging.StreamHandler',   
+            'class': 'logging.StreamHandler',
             'formatter': 'app',
         },
         'file_rotation': {
@@ -99,11 +112,11 @@ LOGGING = {
 }
 
 
-
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -136,25 +149,23 @@ WSGI_APPLICATION = 'mercury.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 # SQLITE Database configurations
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'d2oo0d3u6vr7h0',
-        'HOST': 'ec2-3-209-124-113.compute-1.amazonaws.com',
-        'PORT': '5432',
-        'USER': 'skanxeufuzpdvz',
-        'PASSWORD': '011d0fa4aefc4304323bbd70efebdc6893aab84526db0aed6c764d10cebe566f',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'd2oo0d3u6vr7h0',
+#         'HOST': 'ec2-3-209-124-113.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#         'USER': 'skanxeufuzpdvz',
+#         'PASSWORD': '011d0fa4aefc4304323bbd70efebdc6893aab84526db0aed6c764d10cebe566f',
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -196,4 +207,3 @@ AUTH_USER_MODEL = 'profiles.Researcher'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

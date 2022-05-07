@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib import admin
 
@@ -14,7 +15,7 @@ class GameConfiguration(models.Model):
         (SUB_OPTIMAL, 'SubOptimal')
     ]
 
-    game_code = models.IntegerField()
+    game_code = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
     start_time = models.DateTimeField()
     agents_behaviors = models.CharField(
         max_length= 50,

@@ -1,3 +1,5 @@
+import json
+from tkinter import N
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,12 +11,56 @@ from django.shortcuts import render
 import os
 
 from network.network_utils import create_network
-from research.models import Participant, Interactions, GameConfiguration
-from research.serializers import ParticipantSerializer,InteractionSerializer, GameConfigurationSerializer
-
+from research.models import Participant, Interactions, GameConfiguration, Research
+from research.serializers import (
+    ParticipantSerializer,
+    InteractionSerializer, 
+    GameConfigurationSerializer,
+    ResearchSerializer
+)
 import logging
 
 logger = logging.getLogger(__name__)
+
+class ResearchApiViewList(APIView):
+
+    serializer_class = ResearchSerializer
+
+    def get(self, request):
+        """Research details that belongs to the researcher"""
+        # if not request.user.is_authenticated:
+        #     return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
+
+        research = Research.objects.all()
+        serializer = self.serializer_class(research, many=True)
+        response_status = status.HTTP_200_OK
+        return  Response({"data": serializer.data}, status = response_status)
+    
+    def post(self, request):
+        """Create a new research object"""
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                "message": "Research created successfully",
+            }
+            ## TBD - send emails to participants once research is created!
+            return Response(response, status=status.HTTP_201_CREATED)
+        logger.error(f'\n\n{serializer.errors}\n')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ResearchApiViewDetail(APIView):
+
+    serializer_class = ResearchSerializer
+
+    def get(self, request, researchId):
+        """Teturn Research detail for requested research"""
+        print('is it working?')
+        research = Research.objects.get(id =researchId)
+        serializer = self.serializer_class(research)
+        response_status = status.HTTP_200_OK
+        return  Response({"data": serializer.data}, status = response_status)
 
 class ParticipantList(APIView):
     """A view class to manage participants"""
@@ -24,8 +70,8 @@ class ParticipantList(APIView):
     def get(self, request):
         """Return list of participants"""
 
-        if not request.user.is_authenticated:
-            return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
+        # if not request.user.is_authenticated:
+        #     return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
 
         participants = Participant.objects.all()
         serializer = self.serializer_class(participants, many=True)
@@ -47,20 +93,21 @@ class ParticipantDetails(APIView):
     """
     serializer_class = ParticipantSerializer
     
-    def get_object(self, pk, researchId):
+    def get_object(self, pk):
         try:
             return Participant.objects.get(pk=pk)
         except Participant.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, researchId, format=None):
+    def get(self, request, pk, format=None):
         participant = self.get_object(pk)
         serializer = self.serializer_class(participant)
         return Response(serializer.data)
     
     def patch(self, request, pk, format=None):
-        Participant = self.get_object(pk)
-        serializer = self.serializer_class(Participant, data=request.data, partial=True)
+        participant = self.get_object(pk)
+        print(participant, request.data)
+        serializer = self.serializer_class(participant, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

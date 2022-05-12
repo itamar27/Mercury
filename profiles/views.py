@@ -42,7 +42,7 @@ class UserLoginApiView(ObtainAuthToken):
         
         if not user.check_password(password):
             return Response({'error': "Researcher password is not valid"}, status=status.HTTP_400_BAD_REQUEST)
-        print(user.id)
+
         token, created = Token.objects.get_or_create(user= user)
         return Response({
             'id': user.id,

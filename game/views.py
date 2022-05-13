@@ -39,8 +39,6 @@ class PlayerDetail(APIView):
         
         if player_email:
             participant = self.get_player_with_email(player_email)
-        # else:
-            # participant = self.get_object(pk)
         serializer = self.serializer_class(participant)
         return Response(serializer.data)
     

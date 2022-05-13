@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from profiles import models
 
-
 class ResearcherSerializer(serializers.ModelSerializer):
     "Serializers a researcher object"
 

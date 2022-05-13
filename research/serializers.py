@@ -62,23 +62,15 @@ class ParticipantSerializer(serializers.ModelSerializer):
             vote = Vote(**vote_data)
             vote.save()
 
-        # instance.email = validated_data.pop('email', instance.email)
-        # instance.character_name = validated_data.pop('character_name', instance.character_name)
-        # instance.daily_mission_score = validated_data.pop('daily_mission_score', instance.daily_mission_score)
-        # instance.was_killer = validated_data.pop('was_killer', instance.was_killer)
-        # instance.killer_round = validated_data.pop('killer_round', instance.killer_round)
-# 
-        # instance.save()
-
         return instance
 
 class ResearchSerializer(serializers.ModelSerializer):
     """Serializes for participant model"""
     research_name = serializers.CharField(max_length=24, default="")
-    research_description = serializers.CharField(max_length=150, default=None)
+    research_description = serializers.CharField(max_length=150, default="")
     game_configuration = GameConfigurationSerializer(required=False, default = None)
     participants = ParticipantSerializer(many=True)
-    interactions = InteractionSerializer(many=True, read_only=True, source='interactions_set')
+    interactions = InteractionSerializer(many=True, read_only=True)
     
     class Meta:
         model = Research

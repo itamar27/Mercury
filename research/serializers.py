@@ -53,8 +53,6 @@ class ParticipantSerializer(serializers.ModelSerializer):
         """Update a participant"""
         game_appearance_data = validated_data.pop('game_appearance', None)
         vote_data = validated_data.pop('votes', None)
-        print("=============================================")
-        print(instance)
         if game_appearance_data:
             game_appearance = GameAppearance(participant = instance,**game_appearance_data)
             game_appearance.save()

@@ -1,12 +1,14 @@
 import uuid
 from django.db import models
 from django.contrib import admin
+from shortuuid.django_fields import ShortUUIDField
+
 
 
 class Research(models.Model):
     """Model for research"""
     research_name = models.CharField(max_length=24, default="")
-    research_description = models.TextField(max_length=150, default=None)
+    research_description = models.TextField(max_length=150, null=True ,default=None)
 
 
 class GameConfiguration(models.Model):
@@ -18,7 +20,7 @@ class GameConfiguration(models.Model):
         (SUB_OPTIMAL, 'SubOptimal')
     ]
 
-    game_code = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    game_code = ShortUUIDField(primary_key=True, length=5 ,editable=False)
     start_time = models.DateTimeField()
     agents_behaviors = models.CharField(
         max_length=50,
@@ -57,7 +59,6 @@ class Participant(models.Model):
     def __str__(self):
         return self.email
 
-
 class GameAppearance(models.Model):
     """Database model for player appearance in game"""
     hair = models.CharField(max_length=20, blank=True, null=True)
@@ -90,8 +91,8 @@ class Vote(models.Model):
 
 class Interactions(models.Model):
     """Datebase model for interaction of two players in game"""
-    source = models.CharField(max_length=5)
-    target = models.CharField(max_length=5)
+    source = models.CharField(max_length=10)
+    target = models.CharField(max_length=10)
     score = models.IntegerField(blank=True, null=True)
     message = models.CharField(max_length=255, blank=True, null=True)
     round = models.SmallIntegerField(blank=True, null=True)
@@ -100,6 +101,7 @@ class Interactions(models.Model):
     research = models.ForeignKey(
         'research.Research',
         on_delete=models.CASCADE,
+        related_name = 'interactions',
         blank=True,
         null=True
     )

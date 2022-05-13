@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'profiles',
     'research',
+    'game',
 ]
 
 REST_FRAMEWORK = {

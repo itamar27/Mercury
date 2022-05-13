@@ -1,5 +1,3 @@
-import json
-from tkinter import N
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -125,32 +123,6 @@ class ParticipantDetails(APIView):
         Participant = self.get_object(pk)
         Participant.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-
-class InteractionList(APIView):
-    """Class to manage all project interactions"""
-    serializer_class = InteractionSerializer
-    
-    def get(self, request):
-        """Get list of research interactions"""
-        
-        interactions = Interactions.objects.all()
-        serializer = self.serializer_class(interactions, many=True)
-        response_status = status.HTTP_200_OK
-
-        logger.info("Retrieving all interaction for current research")
-        return  Response({"data": serializer.data}, status = response_status)
-    
-    def post(self, request):
-        """Create a research interaction"""
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            logger.info(f"Creating new interaction - {serializer.data.get('id')}")
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            logger.warning(serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InteractionsNetworkAPIView(APIView):
@@ -168,33 +140,3 @@ class InteractionsNetworkAPIView(APIView):
         print(f'\n\n{os.path.exists(path)}')
         logger.info("Creating a network from all interaction for current research")
         return render(request, path, status=response_status)
-
-
-class GameConfigurationDetail(APIView):
-    """Class to manage research configuration"""
-    
-    serializer_class = GameConfigurationSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_object(self, pk):
-        try:
-            return GameConfiguration.objects.get(pk=pk)
-        except GameConfiguration.DoesNotExist:
-            raise Http404
-
-    def get(self, request, format=None):
-        # gameconfig_id = self.get_object(request.query_params.get('researchId'))
-        serializer = self.serializer_class()
-        return Response(serializer.data)
-    
-    def post(self, request):
-        """Create a research game configuration"""
-        
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            logger.info(f"Creating new game configuration - {serializer.data.get('game_code')}")
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            logger.warning(serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

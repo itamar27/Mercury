@@ -27,7 +27,7 @@ class ResearcherViewSet(viewsets.ModelViewSet):
     serializer_class = ResearcherSerializer
     queryset = Researcher.objects.all()
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated, my_permissions.UpdateOwnProfile,)
+    permission_classes = (my_permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('first_name','last_name', 'email')
 

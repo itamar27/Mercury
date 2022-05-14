@@ -36,7 +36,7 @@ class ResearchApiViewList(APIView):
     
     def post(self, request):
         """Create a new research object"""
-
+        print(request.data.get('researcher'))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()

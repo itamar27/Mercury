@@ -4,6 +4,7 @@ from research.models import (
     GameAppearance, Vote, Interactions
 )
 
+from profiles.models import Researcher
 class GameConfigurationSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameConfiguration
@@ -71,8 +72,9 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
 class ResearchSerializer(serializers.ModelSerializer):
     """Serializes for participant model"""
-    research_name = serializers.CharField(max_length=24, default="")
-    research_description = serializers.CharField(max_length=150, default="")
+    # research_name = serializers.CharField(max_length=24, default="")
+    # research_description = serializers.CharField(max_length=150, default="")
+    researcher = serializers.PrimaryKeyRelatedField(queryset=Researcher.objects.all())
     game_configuration = GameConfigurationSerializer(required=False, default = None)
     participants = ParticipantSerializer(many=True)
     interactions = InteractionSerializer(many=True, read_only=True)
@@ -84,6 +86,7 @@ class ResearchSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Override default create method for inner models instance"""
+        print(validated_data.keys())
         game_configuration = validated_data.pop('game_configuration')
         participants = validated_data.pop('participants')
         research = Research.objects.create(**validated_data)

@@ -10,7 +10,7 @@ class Research(models.Model):
     research_name = models.CharField(max_length=24, default="")
     research_description = models.TextField(max_length=150, null=True ,default=None)
     
-    owner = models.ForeignKey(
+    researcher = models.ForeignKey(
         'profiles.Researcher',
         on_delete=models.CASCADE,
         related_name='researchs',

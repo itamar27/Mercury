@@ -58,8 +58,18 @@ class ResearcherDetails(APIView):
 class UserLoginApiView(ObtainAuthToken):
     """Handle creating user authentication tokens"""
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+    authentication_classes = (TokenAuthentication,)
+
 
     def post(self, request, *args, **kwargs):
+        #Check if user is already authenticated
+        if request.user.is_authenticated:
+            return Response({
+                'id': request.user.id,
+                'email': request.user.email,
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+            },status=status.HTTP_200_OK)
 
         password = request.data.get('password')
         try:

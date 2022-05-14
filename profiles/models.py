@@ -4,8 +4,6 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 
-from research.models import Research
-
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
 
@@ -38,12 +36,6 @@ class Researcher(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
-    research = models.ForeignKey(
-        'research.Research',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True
-    )
     
     #General user fields
     is_active= models.BooleanField(default=True)

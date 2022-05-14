@@ -3,29 +3,56 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from rest_framework.settings import api_settings
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
+from rest_framework import permissions
+
 
 from profiles.serializers import ResearcherSerializer
 from profiles.models import Researcher
-from profiles import permissions
+from research.models import Research
+from profiles import permissions as my_permissions
+from django.http import Http404
+
 
 import logging
-
 logger = logging.getLogger(__name__)
-
 
 class ResearcherViewSet(viewsets.ModelViewSet):
     """Handle creating and updating profiles"""
     serializer_class = ResearcherSerializer
     queryset = Researcher.objects.all()
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (permissions.UpdateOwnProfile,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated, my_permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('first_name','last_name', 'email',)
+    search_fields = ('first_name','last_name', 'email')
+
+
+class ResearcherDetails(APIView):
+    serializer_class = ResearcherSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self, pk):
+        try:
+            return Researcher.objects.get(pk=pk)
+        except Researcher.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+
+        researcher = self.get_object(pk)
+        if researcher.email == request.user.email:
+            print("\n\nUser is valid to view his data\n\n")
+            print(researcher.research_id)
+            serializer = self.serializer_class(researcher)
+            return Response(serializer.data)
+        else:
+            return Response({'error':'You are not permittied to view this data'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserLoginApiView(ObtainAuthToken):

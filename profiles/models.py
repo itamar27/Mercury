@@ -11,14 +11,11 @@ class UserProfileManager(BaseUserManager):
 
     def create_user(self, email, first_name, last_name, password=None):
         """Create a new user """
-        
         if not email:
             raise ValueError("Email has to be provided")
-        
         #insert email and full name to profile
         email = self.normalize_email(email)
         user = self.model(email=email, first_name=first_name, last_name=last_name)
-        
         #set password as a hash
         user.set_password(password)
         user.save(using=self._db)
@@ -27,14 +24,10 @@ class UserProfileManager(BaseUserManager):
 
     def create_superuser(self, email, first_name, last_name, password):
         """Create and save superuser"""
-        
         user = self.create_user(email, first_name, last_name, password)
-        
         user.is_superuser = True
         user.is_staff = True
-
         user.save(using=self._db)
-
         return user
 
 

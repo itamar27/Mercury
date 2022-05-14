@@ -1,26 +1,22 @@
 from rest_framework import serializers
 from profiles import models
+from research.serializers import ResearchSerializer
 
 class ResearcherSerializer(serializers.ModelSerializer):
     "Serializers a researcher object"
-
+    researchs = ResearchSerializer(many=True, read_only=True)
+    
     class Meta:
         model = models.Researcher
-        fields = (
-            'id',
-            'email',
-            'first_name',
-            'last_name',
-            'password'
-        )
-        
+        fields = ['id', 'first_name', 'last_name', 'email','researchs']
+
         extra_kwargs = {
             'password' : {
                 'write_only': True,
                 'style': {'input_type': 'password'}
             }
         }
-
+    
     def create(self, validation_data):
         """Create and return a new user"""
         user = models.Researcher.objects.create_user(

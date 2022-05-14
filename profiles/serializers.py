@@ -8,7 +8,7 @@ class ResearcherSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Researcher
-        fields = ['id', 'first_name', 'last_name', 'email','researchs']
+        fields = ['id', 'first_name', 'last_name', 'password','email','researchs']
 
         extra_kwargs = {
             'password' : {

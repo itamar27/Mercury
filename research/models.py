@@ -17,7 +17,6 @@ class Research(models.Model):
     )
 
 
-
 class GameConfiguration(models.Model):
     """Database model for game configuration json data"""
     OPTIMAL = 1

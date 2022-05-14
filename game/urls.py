@@ -6,5 +6,5 @@ urlpatterns = [
     path('player/', views.PlayerDetail.as_view(), name="player"),
     path('configuration/', views.GameConfigurationDetail.as_view(), name="configuration"),
     path('interaction/', views.InteractionDetail.as_view(), name="interaction"),
-    path('player/<int:pk>/appearance/', views.PlayerDetail.as_view(), name="player appearance")
+    path('player/<int:pk>/update/', views.PlayerDetail.as_view(), name="player update")
 ]

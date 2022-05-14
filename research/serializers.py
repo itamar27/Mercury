@@ -59,6 +59,13 @@ class ParticipantSerializer(serializers.ModelSerializer):
         if vote_data:
             vote = Vote(**vote_data)
             vote.save()
+        instance.email = validated_data.pop('email', instance.email)
+        instance.character_name = validated_data.pop('character_name', instance.character_name)
+        instance.daily_mission_score = validated_data.pop('daily_mission_score', instance.daily_mission_score)
+        instance.was_killer = validated_data.pop('was_killer', instance.was_killer)
+        instance.killer_round = validated_data.pop('killer_round', instance.killer_round)
+
+        instance.save()
 
         return instance
 

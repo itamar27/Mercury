@@ -47,8 +47,6 @@ class ResearcherDetails(APIView):
 
         researcher = self.get_object(pk)
         if researcher.email == request.user.email:
-            print("\n\nUser is valid to view his data\n\n")
-            print(researcher.research_id)
             serializer = self.serializer_class(researcher)
             return Response(serializer.data)
         else:
@@ -59,7 +57,6 @@ class UserLoginApiView(ObtainAuthToken):
     """Handle creating user authentication tokens"""
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
     authentication_classes = (TokenAuthentication,)
-
 
     def post(self, request, *args, **kwargs):
         #Check if user is already authenticated

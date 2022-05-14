@@ -87,8 +87,8 @@ class ResearchSerializer(serializers.ModelSerializer):
         game_configuration = validated_data.pop('game_configuration')
         participants = validated_data.pop('participants')
         research = Research.objects.create(**validated_data)
-
         GameConfiguration.objects.create(research=research, **game_configuration)
+        
         for participant in participants:
             Participant.objects.create(research=research, **participant)
 

@@ -8,5 +8,6 @@ router.register('researcher', views.ResearcherViewSet)
 
 urlpatterns = [
     path('login/', views.UserLoginApiView.as_view()),
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('<int:pk>/details/', views.ResearcherDetails.as_view(), name='researcher details'),
 ]

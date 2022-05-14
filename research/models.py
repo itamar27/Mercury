@@ -9,6 +9,12 @@ class Research(models.Model):
     """Model for research"""
     research_name = models.CharField(max_length=24, default="")
     research_description = models.TextField(max_length=150, null=True ,default=None)
+    
+    owner = models.ForeignKey(
+        'profiles.Researcher',
+        on_delete=models.CASCADE,
+        related_name='researchs',
+    )
 
 
 class GameConfiguration(models.Model):

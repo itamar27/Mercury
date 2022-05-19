@@ -138,6 +138,7 @@ class NetworkAPIView(APIView):
             logger.error("User is not authenticated")
             return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
 
+        error = None
         centrality = None
         density = None
         diameter = None
@@ -157,19 +158,39 @@ class NetworkAPIView(APIView):
         nodes = list(network.nodes)
 
         if request.query_params.get('centrality', None):
-            centrality = Network.calculate_betweens(network)
+            try:
+                centrality = Network.calculate_betweens(network)
+            except Network.nx.NetworkXException as e:
+                logger.error(f'Could not calculate betweens for network\n{e}')
+                error = e
 
         if request.query_params.get('density', None):
-            density = Network.calculate_density(network)
+            try:
+                density = Network.calculate_density(network)
+            except Network.nx.NetworkXException as e:
+                logger.error(f'Could not calculate density for network\n{e}')
+                error = e
 
         if request.query_params.get('radius', None):
-            radius = Network.calculate_radius(network)
+            try:
+                radius = Network.calculate_radius(network)
+            except Network.nx.NetworkXException as e:
+                logger.error(f'Could not calculate radius for network\n{e}')
+                error = e
 
         if request.query_params.get('diameter', None):
-            diameter = Network.calculate_diameter(network)
+            try:
+                diameter = Network.calculate_diameter(network)
+            except Network.nx.NetworkXException as e:
+                logger.error(f'Could not calculate diameter for network\n{e}')
+                error = e
 
         if request.query_params.get('reciprocity', None):
-            reciprocity = Network.calculate_reciprocity(network)
+            try:
+                reciprocity = Network.calculate_reciprocity(network)
+            except Network.nx.NetworkXException as e:
+                logger.error(f'Could not calculate reciprocity for network\n{e}')
+                error = e
 
         response = {
             'interactions':interactions,
@@ -184,6 +205,7 @@ class NetworkAPIView(APIView):
             'centrality': centrality,
             'reciprocity': reciprocity,
             'density': density,
+            'error': error,
         }
 
         return Response(response, status=response_status)

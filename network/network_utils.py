@@ -29,7 +29,16 @@ def create_network(data = None, directed=True):
 
 def calculate_betweens(G , k: int =None):
     """Calculate betweens and return node"""
-    return nx.betweenness_centrality(G, k=k, endpoints=True)
+    center_nodes = nx.betweenness_centrality(G, k=k, endpoints=True)
+    res = {"max": {}}
+    max = -1
+    print(center_nodes)
+    for node, value in center_nodes.items():
+        if value > max:
+            res.update({'max': {node: value}})
+            max = value
+
+    return res['max']
 
 def calculate_density(G):
     """Calculate density of the graph"""

@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 import os
 
-from network.network_utils import create_network
+import network.network_utils  as Network 
 from research.models import Participant, Interactions, GameConfiguration, Research
 from research.serializers import (
     ParticipantSerializer,
@@ -23,12 +23,12 @@ logger = logging.getLogger(__name__)
 class ResearchApiViewList(APIView):
 
     serializer_class = ResearchSerializer
+    permissions_classes = [IsAuthenticated]
 
     def get(self, request):
         """Research details that belongs to the researcher"""
-        # if not request.user.is_authenticated:
-        #     return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
-
+        if not request.user.is_authenticated:
+            return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
         research = Research.objects.all()
         serializer = self.serializer_class(research, many=True)
         response_status = status.HTTP_200_OK
@@ -36,7 +36,6 @@ class ResearchApiViewList(APIView):
     
     def post(self, request):
         """Create a new research object"""
-        print(request.data.get('researcher'))
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -51,10 +50,11 @@ class ResearchApiViewList(APIView):
 class ResearchApiViewDetail(APIView):
 
     serializer_class = ResearchSerializer
+    permissions_classes = [IsAuthenticated]
 
     def get(self, request, researchId):
+        print(request.user)
         """Teturn Research detail for requested research"""
-        print('is it working?')
         research = Research.objects.get(id =researchId)
         serializer = self.serializer_class(research)
         response_status = status.HTTP_200_OK
@@ -68,8 +68,8 @@ class ParticipantList(APIView):
     def get(self, request):
         """Return list of participants"""
 
-        # if not request.user.is_authenticated:
-        #     return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
+        if not request.user.is_authenticated:
+            return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
 
         participants = Participant.objects.all()
         serializer = self.serializer_class(participants, many=True)
@@ -125,18 +125,65 @@ class ParticipantDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class InteractionsNetworkAPIView(APIView):
+class NetworkAPIView(APIView):
     """Class to manage network view"""
-    serializer_class = InteractionSerializer
+    serializer_class = ResearchSerializer
+    permissions_classes = [IsAuthenticated]
+
     
-    def get(self, request):
+    def get(self, request, researchId):
+        """Return Research detail for requested research"""
+
+        if not request.user.is_authenticated:
+            logger.error("User is not authenticated")
+            return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
+
+        centrality = None
+        density = None
+        diameter = None
+        reciprocity = None
+        radius = None
+
+        directed = request.query_params.get('directed', None) 
+        research = Research.objects.get(id =researchId)
+        serializer = self.serializer_class(research)
+        interactions =serializer.data.get('interactions') 
+
         """Get list of research interactions"""
-        
-        interactions = Interactions.objects.all()
-        serializer = self.serializer_class(interactions, many=True)
         response_status = status.HTTP_200_OK
-        create_network(serializer.data)
-        path = os.path.join(os.getcwd(),'research/templates/Interactions/interactions.html')
-        print(f'\n\n{os.path.exists(path)}')
         logger.info("Creating a network from all interaction for current research")
-        return render(request, path, status=response_status)
+        network = Network.create_network(interactions, directed=directed)
+        edges = list(network.edges)
+        nodes = list(network.nodes)
+
+        if request.query_params.get('centrality', None):
+            centrality = Network.calculate_betweens(network)
+
+        if request.query_params.get('density', None):
+            density = Network.calculate_density(network)
+
+        if request.query_params.get('radius', None):
+            radius = Network.calculate_radius(network)
+
+        if request.query_params.get('diameter', None):
+            diameter = Network.calculate_diameter(network)
+
+        if request.query_params.get('reciprocity', None):
+            reciprocity = Network.calculate_reciprocity(network)
+
+        response = {
+            'interactions':interactions,
+            'graph': {
+                'nodes': nodes,
+                'edges': edges,
+            },
+            'node_count': len(nodes),
+            'edges_count': len(edges),
+            'diameter': diameter,
+            'radius': radius,
+            'centrality': centrality,
+            'reciprocity': reciprocity,
+            'density': density,
+        }
+
+        return Response(response, status=response_status)

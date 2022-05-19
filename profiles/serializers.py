@@ -36,11 +36,3 @@ class ResearcherSerializer(serializers.ModelSerializer):
  
         return super().update(instance, validated_data)
 
-
-
-
-
-
-
-
-

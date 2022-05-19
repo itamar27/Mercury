@@ -32,7 +32,6 @@ def calculate_betweens(G , k: int =None):
     center_nodes = nx.betweenness_centrality(G, k=k, endpoints=True)
     res = {"max": {}}
     max = -1
-    print(center_nodes)
     for node, value in center_nodes.items():
         if value > max:
             res.update({'max': {node: value}})

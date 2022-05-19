@@ -162,35 +162,35 @@ class NetworkAPIView(APIView):
                 centrality = Network.calculate_betweens(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate betweens for network\n{e}')
-                error = e
+                error = e.message
 
         if request.query_params.get('density', None):
             try:
                 density = Network.calculate_density(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate density for network\n{e}')
-                error = e
+                error = e.message
 
         if request.query_params.get('radius', None):
             try:
                 radius = Network.calculate_radius(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate radius for network\n{e}')
-                error = e
+                error = e.message
 
         if request.query_params.get('diameter', None):
             try:
                 diameter = Network.calculate_diameter(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate diameter for network\n{e}')
-                error = e
+                error = e.message
 
         if request.query_params.get('reciprocity', None):
             try:
                 reciprocity = Network.calculate_reciprocity(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate reciprocity for network\n{e}')
-                error = e
+                error = e.message
 
         response = {
             'interactions':interactions,

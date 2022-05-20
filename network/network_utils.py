@@ -8,6 +8,8 @@ def create_network(data = None, directed=True):
         G = nx.DiGraph()
     else:
         G = nx.Graph()
+    if not data:
+        return G
 
     # set the physics layout of the network
     got_data = pd.DataFrame(data)
@@ -30,6 +32,7 @@ def create_network(data = None, directed=True):
 def calculate_betweens(G , k: int =None):
     """Calculate betweens and return node"""
     center_nodes = nx.betweenness_centrality(G, k=k, endpoints=True)
+    print(center_nodes)
     res = {"max": {}}
     max = -1
     for node, value in center_nodes.items():

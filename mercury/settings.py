@@ -70,10 +70,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-# logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
-# logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
-# LOG_LEVEL = env("LOG_LEVEL")
-
 # Define custom logger for mercury project
 LOGGING = {
     "version": 1,

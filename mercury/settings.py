@@ -146,23 +146,25 @@ WSGI_APPLICATION = 'mercury.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 # SQLITE Database configurations
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'd2oo0d3u6vr7h0',
-#         'HOST': 'ec2-3-209-124-113.compute-1.amazonaws.com',
-#         'PORT': '5432',
-#         'USER': 'skanxeufuzpdvz',
-#         'PASSWORD': '011d0fa4aefc4304323bbd70efebdc6893aab84526db0aed6c764d10cebe566f',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+# Postgresql Database configurations
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'debo5l06e7823r',
+        'HOST': 'ec2-3-231-82-226.compute-1.amazonaws.com',
+        'PORT': '5432',
+        'USER': 'vissxwpjwhgzrm',
+        'PASSWORD': '0b2720195fc3244e3dee88f700c236c37e38e1858f53ba5a7ba0373b98b98219',
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

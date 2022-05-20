@@ -34,8 +34,8 @@ SECRET_KEY = 'django-insecure-yt%bvrwo4#t9xie7$exh@(8qgl@^vpfj)s$ovjew100dkcw*pg
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'mercury-be-network.herokuapp.com',
     'mercury-be-3022.herokuapp.com',
-    'mercury-be-2022.herokuapp.com',
     'localhost',
     '127.0.0.1'
 ]

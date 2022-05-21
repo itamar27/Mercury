@@ -113,21 +113,36 @@ class Interactions(models.Model):
     )
 
 
-def download_csv(modeladmin, request, queryset):
-    import csv
-    f = open('some.csv', 'wb')
-    writer = csv.writer(f)
-    writer.writerow(["source", "target", "message", "time_stamp"])
-    for s in queryset:
-        writer.writerow([s.source, s.target, s.message, s.time_stamp])
-
-
-class StatAdmin(admin.ModelAdmin):
-    list_display = ('source', 'target', 'message', 'time_stamp')
-    actions = [download_csv]
-
-
-class Clues(models.Model):
+class Clue(models.Model):
     """Database model ton represent all clues and their"""
-    # TBD after alpha phase
-    pass
+    COMMON = 1
+    HIDDEN = 2
+    CLUE_TYPE_CHOICE = [
+        (COMMON, 'common'),
+        (HIDDEN, 'hidden')
+    ]
+    
+    message = models.CharField(max_length = 256)
+    round = models.SmallIntegerField(blank=True, null=True)
+    type = models.CharField(
+        max_length=50,
+        choices=CLUE_TYPE_CHOICE,
+        null=True,
+        default=None
+    )
+
+    participant = models.ForeignKey(
+        'research.Participant',
+        on_delete=models.CASCADE,
+        related_name='clue',
+        null=True
+    )
+
+    research = models.ForeignKey(
+        'research.Research',
+        on_delete=models.CASCADE,
+        related_name='clue',
+        null=True
+    )
+    
+    

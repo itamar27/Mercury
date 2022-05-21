@@ -60,6 +60,7 @@ class UserLoginApiView(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         #Check if user is already authenticated
+        logger.info("Trying to authenticated user")
         if request.user.is_authenticated:
             return Response({
                 'id': request.user.id,

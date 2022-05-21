@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from research.models import (
     Research, Participant, GameConfiguration, 
-    GameAppearance, Vote, Interactions
+    GameAppearance, Vote, Interactions, Clue
 )
 
 from profiles.models import Researcher
@@ -10,6 +10,10 @@ class GameConfigurationSerializer(serializers.ModelSerializer):
         model = GameConfiguration
         fields = '__all__' 
 
+class ClueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Clue
+        fields = '__all__' 
 class InteractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interactions
@@ -39,10 +43,11 @@ class ParticipantSerializer(serializers.ModelSerializer):
     killer_round = serializers.IntegerField(required=False)
     votes = VotesSerializer(required=False, many=True)
     game_appearance = GameAppearanceSerializer(required=False)
+    clue = ClueSerializer(required=False, many=True)
     
     class Meta:
         model = Participant
-        fields = ['id','email', 'character_name', 'daily_mission_score', 'was_killer', 'killer_round', 'votes', 'game_appearance']
+        fields = ['id','email', 'character_name', 'daily_mission_score', 'was_killer', 'killer_round', 'votes', 'game_appearance', 'clue']
         depth = 1
 
     def create(self, validated_data):
@@ -60,6 +65,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
         if vote_data:
             vote = Vote(**vote_data)
             vote.save()
+
         instance.email = validated_data.pop('email', instance.email)
         instance.character_name = validated_data.pop('character_name', instance.character_name)
         instance.daily_mission_score = validated_data.pop('daily_mission_score', instance.daily_mission_score)
@@ -72,10 +78,9 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
 class ResearchSerializer(serializers.ModelSerializer):
     """Serializes for participant model"""
-    # research_name = serializers.CharField(max_length=24, default="")
-    # research_description = serializers.CharField(max_length=150, default="")
     researcher = serializers.PrimaryKeyRelatedField(queryset=Researcher.objects.all())
     game_configuration = GameConfigurationSerializer(required=False, default = None)
+    clue = ClueSerializer(many=True, read_only=True )
     participants = ParticipantSerializer(many=True)
     interactions = InteractionSerializer(many=True, read_only=True)
     
@@ -86,7 +91,6 @@ class ResearchSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Override default create method for inner models instance"""
-        print(validated_data.keys())
         game_configuration = validated_data.pop('game_configuration')
         participants = validated_data.pop('participants')
         research = Research.objects.create(**validated_data)

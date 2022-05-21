@@ -34,8 +34,8 @@ SECRET_KEY = 'django-insecure-yt%bvrwo4#t9xie7$exh@(8qgl@^vpfj)s$ovjew100dkcw*pg
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'mercury-be-network.herokuapp.com',
     'mercury-be-3022.herokuapp.com',
-    'mercury-be-2022.herokuapp.com',
     'localhost',
     '127.0.0.1'
 ]
@@ -69,10 +69,6 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",
     ]
 }
-
-# logs_max_file_size_gb = int(env("LOGS_MAX_FILE_SIZE_GB"))
-# logs_backup_count = int(env("LOGS_ROTATION_BACKUP_COUNT"))
-# LOG_LEVEL = env("LOG_LEVEL")
 
 # Define custom logger for mercury project
 LOGGING = {
@@ -157,14 +153,16 @@ DATABASES = {
     }
 }
 
+# Postgresql Database configurations
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'd2oo0d3u6vr7h0',
-#         'HOST': 'ec2-3-209-124-113.compute-1.amazonaws.com',
+#         'NAME': 'debo5l06e7823r',
+#         'HOST': 'ec2-3-231-82-226.compute-1.amazonaws.com',
 #         'PORT': '5432',
-#         'USER': 'skanxeufuzpdvz',
-#         'PASSWORD': '011d0fa4aefc4304323bbd70efebdc6893aab84526db0aed6c764d10cebe566f',
+#         'USER': 'vissxwpjwhgzrm',
+#         'PASSWORD': '0b2720195fc3244e3dee88f700c236c37e38e1858f53ba5a7ba0373b98b98219',
 #     }
 # }
 

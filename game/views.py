@@ -10,6 +10,7 @@ from research.serializers import (
     GameConfigurationSerializer,
     InteractionSerializer,
     ParticipantSerializer,
+    ClueSerializer,
 ) 
 from django.http import Http404
 
@@ -85,6 +86,21 @@ class InteractionDetail(APIView):
     """Class to manage all project interactions"""
     serializer_class = InteractionSerializer
       
+    def post(self, request):
+        """Create a research interaction"""
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            logger.info(f"Creating new interaction - {serializer.data.get('id')}")
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            logger.warning(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ClueDetail(APIView):
+    """Class to manage all projects clues"""
+    serializer_class = ClueSerializer
+
     def post(self, request):
         """Create a research interaction"""
         serializer = self.serializer_class(data=request.data)

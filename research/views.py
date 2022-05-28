@@ -69,8 +69,10 @@ class ResearchApiViewDetail(APIView):
             return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
         research = self.get_object(pk =researchId)
         serializer = self.serializer_class(research)
+        data = serializer.data
+        data.update({'interactions': len(data.get('interactions'))})
         response_status = status.HTTP_200_OK
-        return  Response({"data": serializer.data}, status = response_status)
+        return  Response({"data": data}, status = response_status)
 
     
     def delete(self, request, pk, format=None):
@@ -183,7 +185,7 @@ class NetworkAPIView(APIView):
         reciprocity = None
         radius = None
 
-        directed = request.query_params.get('directed', None) 
+        directed = request.query_params.get('directed', True) 
         research = Research.objects.get(id =researchId)
         serializer = self.serializer_class(research)
         interactions =serializer.data.get('interactions') 
@@ -239,7 +241,6 @@ class NetworkAPIView(APIView):
                 error = e.message
 
         response = {
-            'interactions':interactions,
             'graph': {
                 'nodes': nodes,
                 'edges': edges,

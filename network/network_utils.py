@@ -5,9 +5,9 @@ import pandas as pd
 
 def create_network(data = None, directed=True):
     if directed:
-        G = nx.DiGraph()
+        G = nx.MultiDiGraph()
     else:
-        G = nx.Graph()
+        G = nx.MultiGraph()
     if not data:
         return G
 
@@ -22,17 +22,17 @@ def create_network(data = None, directed=True):
     for e in edge_data:
         src = e[0]
         dst = e[1]
+        score=e[2]
 
         G.add_node(src, title=src)
         G.add_node(dst, title=dst)
-        G.add_edge(src, dst)
+        G.add_edge(src, dst, weight=score)
     return G
 
 
 def calculate_betweens(G , k: int =None):
     """Calculate betweens and return node"""
     center_nodes = nx.betweenness_centrality(G, k=k, endpoints=True)
-    print(center_nodes)
     res = {"max": {}}
     max = -1
     for node, value in center_nodes.items():

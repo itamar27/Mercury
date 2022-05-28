@@ -48,7 +48,24 @@ class ResearcherDetails(APIView):
         researcher = self.get_object(pk)
         if researcher.email == request.user.email:
             serializer = self.serializer_class(researcher)
-            return Response(serializer.data)
+            researches = serializer.data.get('researchs')
+            researches_data = []
+            res = {
+                'email': serializer.data.get('email'),
+                'first_name': serializer.data.get('first_name'),
+                'id': serializer.data.get('id'), 
+            }
+            for research in researches:
+                researches_data.append({
+                    'research_name': research.get('research_name'),
+                    'research_description': research.get('research_description'),
+                    'participants': len(research.get('participants')),
+                    'start_time': research.get('game_configuration').get('start_time'),
+                    'research_id': research.get('id')
+
+                })
+            res['researches'] = researches_data
+            return Response(res)
         else:
             return Response({'error':'You are not permittied to view this data'}, status=status.HTTP_401_UNAUTHORIZED)
 

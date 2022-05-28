@@ -1,13 +1,11 @@
-from pyvis.network import Network
 import networkx as nx
-import os
 import pandas as pd
 
 def create_network(data = None, directed=True):
     if directed:
-        G = nx.DiGraph()
+        G = nx.MultiDiGraph()
     else:
-        G = nx.Graph()
+        G = nx.MultiGraph()
     if not data:
         return G
 
@@ -16,23 +14,24 @@ def create_network(data = None, directed=True):
     sources = got_data['source']
     targets = got_data['target']
     weights = got_data['score']
+    ids = got_data['id']
 
-    edge_data = zip(sources, targets, weights)
-
+    edge_data = zip(sources, targets, weights, ids)
     for e in edge_data:
         src = e[0]
         dst = e[1]
+        score=e[2]
+        id = e[3]
 
         G.add_node(src, title=src)
         G.add_node(dst, title=dst)
-        G.add_edge(src, dst)
+        G.add_edge(src, dst, key=id, weight=score)    
     return G
 
 
 def calculate_betweens(G , k: int =None):
     """Calculate betweens and return node"""
     center_nodes = nx.betweenness_centrality(G, k=k, endpoints=True)
-    print(center_nodes)
     res = {"max": {}}
     max = -1
     for node, value in center_nodes.items():

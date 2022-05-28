@@ -69,8 +69,10 @@ class ResearchApiViewDetail(APIView):
             return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
         research = self.get_object(pk =researchId)
         serializer = self.serializer_class(research)
+        data = serializer.data
+        data.update({'interactions': len(data.get('interactions'))})
         response_status = status.HTTP_200_OK
-        return  Response({"data": serializer.data}, status = response_status)
+        return  Response({"data": data}, status = response_status)
 
     
     def delete(self, request, pk, format=None):
@@ -183,7 +185,7 @@ class NetworkAPIView(APIView):
         reciprocity = None
         radius = None
 
-        directed = request.query_params.get('directed', None) 
+        directed = request.query_params.get('directed', True) 
         research = Research.objects.get(id =researchId)
         serializer = self.serializer_class(research)
         interactions =serializer.data.get('interactions') 
@@ -199,8 +201,9 @@ class NetworkAPIView(APIView):
         """Get list of research interactions"""
         response_status = status.HTTP_200_OK
         logger.info("Creating a network from all interaction for current research")
+        
         network = Network.create_network(interactions, directed=directed)
-        edges = list(network.edges)
+        edges = list(network.edges(data=True))
         nodes = list(network.nodes)
 
         if request.query_params.get('centrality', None) and network:
@@ -208,38 +211,37 @@ class NetworkAPIView(APIView):
                 centrality = Network.calculate_betweens(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate betweens for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('density', None) and network:
             try:
                 density = Network.calculate_density(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate density for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('radius', None) and network:
             try:
                 radius = Network.calculate_radius(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate radius for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('diameter', None) and network:
             try:
                 diameter = Network.calculate_diameter(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate diameter for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('reciprocity', None) and network:
             try:
                 reciprocity = Network.calculate_reciprocity(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate reciprocity for network\n{e}')
-                error = e.message
+                error = str(e)
 
         response = {
-            'interactions':interactions,
             'graph': {
                 'nodes': nodes,
                 'edges': edges,

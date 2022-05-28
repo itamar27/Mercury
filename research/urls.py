@@ -5,5 +5,6 @@ from research import views
 urlpatterns = [
     path('', views.ResearchApiViewList.as_view(), name="research"),
     path('<int:researchId>/details/', views.ResearchApiViewDetail.as_view(), name="research detail"),
+    path('<int:researchId>/details/interactions/', views.InteractionsListAPIViw.as_view(), name="research detail"),
     path('<int:researchId>/network/',views.NetworkAPIView.as_view(), name="network view"),
 ]

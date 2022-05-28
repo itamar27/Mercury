@@ -1,6 +1,4 @@
-from pyvis.network import Network
 import networkx as nx
-import os
 import pandas as pd
 
 def create_network(data = None, directed=True):
@@ -16,17 +14,18 @@ def create_network(data = None, directed=True):
     sources = got_data['source']
     targets = got_data['target']
     weights = got_data['score']
+    ids = got_data['id']
 
-    edge_data = zip(sources, targets, weights)
-
+    edge_data = zip(sources, targets, weights, ids)
     for e in edge_data:
         src = e[0]
         dst = e[1]
         score=e[2]
+        id = e[3]
 
         G.add_node(src, title=src)
         G.add_node(dst, title=dst)
-        G.add_edge(src, dst, weight=score)
+        G.add_edge(src, dst, key=id, weight=score)    
     return G
 
 

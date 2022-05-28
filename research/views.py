@@ -201,8 +201,9 @@ class NetworkAPIView(APIView):
         """Get list of research interactions"""
         response_status = status.HTTP_200_OK
         logger.info("Creating a network from all interaction for current research")
+        
         network = Network.create_network(interactions, directed=directed)
-        edges = list(network.edges)
+        edges = list(network.edges(data=True))
         nodes = list(network.nodes)
 
         if request.query_params.get('centrality', None) and network:
@@ -210,35 +211,35 @@ class NetworkAPIView(APIView):
                 centrality = Network.calculate_betweens(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate betweens for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('density', None) and network:
             try:
                 density = Network.calculate_density(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate density for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('radius', None) and network:
             try:
                 radius = Network.calculate_radius(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate radius for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('diameter', None) and network:
             try:
                 diameter = Network.calculate_diameter(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate diameter for network\n{e}')
-                error = e.message
+                error = str(e)
 
         if request.query_params.get('reciprocity', None) and network:
             try:
                 reciprocity = Network.calculate_reciprocity(network)
             except Network.nx.NetworkXException as e:
                 logger.error(f'Could not calculate reciprocity for network\n{e}')
-                error = e.message
+                error = str(e)
 
         response = {
             'graph': {

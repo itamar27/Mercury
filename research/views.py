@@ -164,6 +164,21 @@ class ParticipantDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class InteractionsListAPIViw(APIView):
+    """Class to return  all research interactions"""
+    serializer_class = ResearchSerializer
+    permissions_classes = [IsAuthenticated]
+
+    def get(self, request, researchId):
+        if not request.user.is_authenticated:
+            logger.error("User is not authenticated")
+            return  Response({"error": "User is not authenticated"}, status = status.HTTP_400_BAD_REQUEST)
+        research = Research.objects.get(id =researchId)
+        serializer = self.serializer_class(research)
+        interactions =serializer.data.get('interactions')
+
+        return Response(interactions)
+
 class NetworkAPIView(APIView):
     """Class to manage network view"""
     serializer_class = ResearchSerializer
